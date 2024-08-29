@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>Cities</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Posts</th>
+            <th>Actions</th>
+        </tr>
+        {% for city in cities %}
+            <tr>
+                <td>{{ city.name }}</td>
+                <td><a href="/">Posts</a></td>
+                <td>
+                    <a href="">Delete</a>
+                    <br>
+                    <a href="">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <form action="/" method="POST">
+        <input type="text" name="name">
+        <input type="submit" name="add city">
+    </form>
+</div>
+{% endblock %}
