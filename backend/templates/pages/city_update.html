@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6 mx-auto text-center">
+            <h1 class="mt-2">{{ city.name }}</h1>
+            <form class="mt-2" action="/update/{{ city._id }}" method="POST">
+                <input type="text" name="name" value="{{ city.name }}">
+                <input class="btn btn-primary" type="submit" name="add city" value="Update">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

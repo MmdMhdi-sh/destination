@@ -5,25 +5,31 @@
 
 {% block body %}
 <div class="container-fluid">
+    {% if cities|length < 1 %}
+        <h4>There are no cities. You can add your city below.</h4>
+    {% else %}
     <h1>Cities</h1>
-    <table>
-        <tr>
+    <table class="table">
+        <tr class="table-dark">
+            <th>ID</th>
             <th>Name</th>
             <th>Posts</th>
             <th>Actions</th>
         </tr>
         {% for city in cities %}
             <tr>
+                <td>{{ city._id }}</td>
                 <td>{{ city.name }}</td>
-                <td><a href="/">Posts</a></td>
+                <td><a href="/detail/{{ city._id }}">Posts</a></td>
                 <td>
-                    <a href="">Delete</a>
+                    <a href="/delete/{{ city._id }}">Delete</a>
                     <br>
-                    <a href="">Update</a>
+                    <a href="/update/{{ city._id }}">Update</a>
                 </td>
             </tr>
         {% endfor %}
     </table>
+    {% endif %}
     <form action="/" method="POST">
         <input type="text" name="name">
         <input type="submit" name="add city">

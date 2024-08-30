@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6 mx-auto text-center">
+            <h4 class="mt-2">{{ city.name }}</h4>
+            <div class="btn-group mt-2">
+                <a href="/update/{{ city._id }}" class="btn btn-primary">Update</a>
+                <a href="/delete/{{ city._id }}" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
