@@ -1,11 +1,24 @@
-from flask import Flask, render_template, request, redirect
+from flask import (
+    Flask,  
+    redirect,
+    render_template,
+    request, 
+    session
+)
 from flask_sqlalchemy import SQLAlchemy
+from datetime import timedelta
+
 app = Flask(__name__)
 
-
+app.secret_key = "you are a b****"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask.db"
+app.permanent_session_lifetime = timedelta(minutes=5)
 db = SQLAlchemy(app)
 
+
+"""
+Models
+"""
 class User(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -23,7 +36,31 @@ class City(db.Model):
 with app.app_context():
     db.create_all()
 
-    
+"""
+functions
+"""
+def set_user_session(user, session):
+    session['username'] = user.username
+
+def user_exits(user_username):
+    user = User.query.filter_by(username=user_username).first()
+    if user:
+        return True
+    return False
+
+
+def is_authenticated(session):
+    session_username = session['username']
+    user = User.query.filter_by(username=session_username).first()
+    if user:
+        return True
+    return False
+
+
+
+"""
+Views
+"""
 @app.route('/', methods=['POST', 'GET'])
 def home_page():
     if request.method == "POST":
@@ -61,9 +98,23 @@ def user_register_view():
         users_list = User.query.order_by(User._id).all()
         return render_template('pages/register.html', users=users_list)  
 
-# @app.route('/login', methods=['POST', 'GET'])
-# def login_view():
-
+@app.route('/login', methods=['POST', 'GET'])
+def login_view():
+    if request.method == 'POST':
+        user_username = request.form['username']
+        user_password = request.form['password']
+        if user_exits(user_username):
+            user_obj = User.query.filter_by(username=user_username).first()
+            if user_password == user_obj.password:
+                set_user_session(user_obj, session)
+                print("session =", session)
+                redirect('/')
+            else:
+                return "wrong password"
+        else:
+            return "Username does not exist!"
+    return render_template("pages/login.html")
+    
 
 
 
