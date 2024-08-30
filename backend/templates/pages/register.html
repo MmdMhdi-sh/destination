@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Register</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <h1 class>Register</h1>
+            <form action="/register" method="POST">
+                <label for="user-username" class="form-label">Username</label>
+                <br>
+                <input type="text" name="username" id="user-username">
+                <br>
+                <label for="user-password" class="form-label">Password</label>
+                <br>
+                <input type="password" name="password" id="user-password">
+                <br>
+                <input type="submit" name="add user" class="btn btn-primary mt-2">
+            </form>
+        </div>
+        <div class="col-4">
+            <table class="table">
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Actions</th>
+                </tr>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user._id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.password }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a class="btn btn-primary" href="/user/delete">Profile</a>
+                            <a class="btn btn-primary" href="/user/Update">Update</a>
+                            <a class="btn btn-primary" href="user/profile">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

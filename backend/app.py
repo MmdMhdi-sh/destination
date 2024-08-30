@@ -6,12 +6,20 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask.db"
 db = SQLAlchemy(app)
 
+class User(db.Model):
+    _id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+    def __repr__(self):
+        return '<User %r>' % self.username
+
 class City(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), unique=True, nullable=False)
 
-    # def __repr__(self):
-    #     return '<User %r>' % self.name
+    def __repr__(self):
+        return '<City %r>' % self.name
+    
 with app.app_context():
     db.create_all()
 
@@ -32,6 +40,32 @@ def home_page():
     else:
         cities_list = City.query.order_by(City._id).all()
         return render_template('pages/home.html', cities=cities_list)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def user_register_view():
+    if request.method == 'POST':
+        print("request.form = ", request.form)
+        user_username = request.form['username']
+        user_password = request.form['password']
+        print("user_username = ", user_username)
+        print("user_password = ", user_password)
+        new_user = User(username=user_username, password=user_password)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect('/register')
+        except:
+            return "You cannot register!"
+    else:
+        users_list = User.query.order_by(User._id).all()
+        return render_template('pages/register.html', users=users_list)  
+
+# @app.route('/login', methods=['POST', 'GET'])
+# def login_view():
+
+
+
 
 @app.route('/delete/<int:id>')
 def city_delete_view(id):
