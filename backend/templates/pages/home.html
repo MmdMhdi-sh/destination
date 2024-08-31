@@ -20,8 +20,10 @@
             <tr>
                 <td>{{ city._id }}</td>
                 <td>{{ city.name }}</td>
-                <td><a href="/detail/{{ city._id }}">Posts</a></td>
+                <td><a href="/posts/{{ city.name }}">Posts</a></td>
                 <td>
+                    <a href="/detail/{{ city._id }}">Detail</a>
+                    <br>
                     <a href="/delete/{{ city._id }}">Delete</a>
                     <br>
                     <a href="/update/{{ city._id }}">Update</a>
