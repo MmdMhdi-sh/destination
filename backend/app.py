@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 from flask import (
     Flask,  
     redirect,
@@ -6,24 +7,39 @@ from flask import (
     session,
     url_for
 )
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-from datetime import timedelta, datetime
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
+
 
 app = Flask(__name__)
 
-app.secret_key = "you are a b****"
+app.secret_key = "thisisasecretkey"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask.db"
 app.permanent_session_lifetime = timedelta(minutes=5)
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 """
 Models
 """
-class User(db.Model):
-    _id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(20), nullable=False)
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    password = db.Column(db.String(80), nullable=False)
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -44,7 +60,7 @@ class Post(db.Model):
 
 class Comment(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(150), db.ForeignKey('user._id'), nullable=False)
+    user_id = db.Column(db.String(150), db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.String(150), db.ForeignKey('post._id'), nullable=False)
     content = db.Column(db.String(500), nullable=False)
     timestamp = db.Column(db.DateTime,
@@ -54,6 +70,34 @@ class Comment(db.Model):
 with app.app_context():
     db.create_all()
 
+"""
+Forms
+"""
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        existing_user_username = User.query.filter_by(
+            username=username.data).first()
+        if existing_user_username:
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
+
+class LoginForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Login')
+    
 """
 functions
 """
@@ -80,6 +124,7 @@ def is_authenticated(session):
 Views
 """
 @app.route('/', methods=['POST', 'GET'])
+@login_required
 def home_page():
     if request.method == "POST":
         city_name = request.form['name']
@@ -98,41 +143,66 @@ def home_page():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def user_register_view():
-    if request.method == 'POST':
-        print("request.form = ", request.form)
-        user_username = request.form['username']
-        user_password = request.form['password']
-        print("user_username = ", user_username)
-        print("user_password = ", user_password)
-        new_user = User(username=user_username, password=user_password)
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            return redirect('/register')
-        except:
-            return "You cannot register!"
-    else:
-        users_list = User.query.order_by(User._id).all()
-        return render_template('pages/register.html', users=users_list)  
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    users_list = User.query.order_by(User.id).all()
+    return render_template('pages/register.html', form=form, users=users_list)  
+# def user_register_view():
+#     if request.method == 'POST':
+#         print("request.form = ", request.form)
+#         user_username = request.form['username']
+#         user_password = request.form['password']
+#         print("user_username = ", user_username)
+#         print("user_password = ", user_password)
+#         new_user = User(username=user_username, password=user_password)
+#         try:
+#             db.session.add(new_user)
+#             db.session.commit()
+#             return redirect('/register')
+#         except:
+#             return "You cannot register!"
+#     else:
+#         users_list = User.query.order_by(User._id).all()
+#         return render_template('pages/register.html', users=users_list)  
 
 @app.route('/login', methods=['POST', 'GET'])
-def login_view():
-    if request.method == 'POST':
-        user_username = request.form['username']
-        user_password = request.form['password']
-        if user_exits(user_username):
-            user_obj = User.query.filter_by(username=user_username).first()
-            if user_password == user_obj.password:
-                set_user_session(user_obj, session)
-                print("session =", session)
-                redirect('/')
-            else:
-                return "wrong password"
-        else:
-            return "Username does not exist!"
-    return render_template("pages/login.html")
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                return redirect(url_for('home_page'))
+    return render_template('pages/login.html', form=form) 
+# def login_view():
+#     if request.method == 'POST':
+#         user_username = request.form['username']
+#         user_password = request.form['password']
+#         if user_exits(user_username):
+#             user_obj = User.query.filter_by(username=user_username).first()
+#             if user_password == user_obj.password:
+#                 set_user_session(user_obj, session)
+#                 print("session =", session)
+#                 redirect('/')
+#             else:
+#                 return "wrong password"
+#         else:
+#             return "Username does not exist!"
+#     return render_template("pages/login.html")
     
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 
 @app.route('/posts/<city_name>', methods=['GET', 'POST'])
 def city_posts_view(city_name):

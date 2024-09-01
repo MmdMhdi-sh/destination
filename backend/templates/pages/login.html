@@ -10,6 +10,12 @@
         <div class="col-8">
             <h1 class>Login</h1>
             <form action="/login" method="POST">
+                {{ form.hidden_tag() }}
+                {{ form.username }}
+                {{ form.password }}
+                {{ form.submit }}
+            </form>
+            <!-- <form action="/login" method="POST">
                 <label for="user-username" class="form-label">Username</label>
                 <br>
                 <input type="text" name="username" id="user-username">
@@ -19,7 +25,7 @@
                 <input type="password" name="password" id="user-password">
                 <br>
                 <input type="submit" name="add user" class="btn btn-primary mt-2">
-            </form>
+            </form> -->
         </div>
     </div>
 </div>
