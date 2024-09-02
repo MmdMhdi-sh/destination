@@ -1,10 +1,10 @@
 from datetime import timedelta, datetime
 from flask import (
-    Flask,  
+    Flask, 
+    flash, 
     redirect,
     render_template,
     request, 
-    session,
     url_for
 )
 from flask_bcrypt import Bcrypt
@@ -18,6 +18,8 @@ from wtforms.validators import InputRequired, Length, ValidationError
 app = Flask(__name__)
 
 app.secret_key = "thisisasecretkey"
+app.config["UPLOAD_EXTENSIONS"] = [".jpg", ".png"]
+app.config["UPLOAD_PATH"] = "image_uploads"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask.db"
 app.permanent_session_lifetime = timedelta(minutes=5)
 db = SQLAlchemy(app)
@@ -144,7 +146,12 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
+                flash("Login Successful!")
                 return redirect(url_for('home_page'))
+            else: 
+                flash("Wrong Password!")
+        else:
+            flash("Username is incorrect!")
     return render_template('pages/login.html', form=form) 
     
 @app.route('/logout')
@@ -170,7 +177,7 @@ def city_posts_view(city_name):
             return 'You cannot add this post!'
     print("city_name = ",city_name)
     city_obj= City.query.filter_by(name=city_name).first()
-    posts_list = City.query.filter_by(name=city_name).first().posts
+    posts_list = City.query.filter_by(name=city_obj.name).first().posts
     return render_template('city/city_posts.html', city=city_obj, posts=posts_list)
 
 @app.route('/posts/<int:id>', methods=['POST', 'GET'])
