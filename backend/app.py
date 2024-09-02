@@ -28,6 +28,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+"""
+functions
+"""
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -98,33 +101,12 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField('Login')
     
-"""
-functions
-"""
-def set_user_session(user, session):
-    session['username'] = user.username
-
-def user_exits(user_username):
-    user = User.query.filter_by(username=user_username).first()
-    if user:
-        return True
-    return False
-
-
-def is_authenticated(session):
-    session_username = session['username']
-    user = User.query.filter_by(username=session_username).first()
-    if user:
-        return True
-    return False
-
 
 
 """
 Views
 """
 @app.route('/', methods=['POST', 'GET'])
-@login_required
 def home_page():
     if request.method == "POST":
         city_name = request.form['name']
@@ -153,23 +135,6 @@ def register():
         return redirect(url_for('login'))
     users_list = User.query.order_by(User.id).all()
     return render_template('pages/register.html', form=form, users=users_list)  
-# def user_register_view():
-#     if request.method == 'POST':
-#         print("request.form = ", request.form)
-#         user_username = request.form['username']
-#         user_password = request.form['password']
-#         print("user_username = ", user_username)
-#         print("user_password = ", user_password)
-#         new_user = User(username=user_username, password=user_password)
-#         try:
-#             db.session.add(new_user)
-#             db.session.commit()
-#             return redirect('/register')
-#         except:
-#             return "You cannot register!"
-#     else:
-#         users_list = User.query.order_by(User._id).all()
-#         return render_template('pages/register.html', users=users_list)  
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -181,27 +146,12 @@ def login():
                 login_user(user)
                 return redirect(url_for('home_page'))
     return render_template('pages/login.html', form=form) 
-# def login_view():
-#     if request.method == 'POST':
-#         user_username = request.form['username']
-#         user_password = request.form['password']
-#         if user_exits(user_username):
-#             user_obj = User.query.filter_by(username=user_username).first()
-#             if user_password == user_obj.password:
-#                 set_user_session(user_obj, session)
-#                 print("session =", session)
-#                 redirect('/')
-#             else:
-#                 return "wrong password"
-#         else:
-#             return "Username does not exist!"
-#     return render_template("pages/login.html")
     
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('home_page'))
 
 
 @app.route('/posts/<city_name>', methods=['GET', 'POST'])
@@ -227,10 +177,12 @@ def city_posts_view(city_name):
 def post_detail_view(id):
     post_obj = Post.query.get_or_404(id)
     if request.method == 'POST':
-        comment_user = User.query.get_or_404(1)
+        comment_user = current_user
+        if not current_user.is_authenticated:
+            return redirect(url_for('login'))
         comment_post = Post.query.get_or_404(id)
         comment_content = request.form['content']
-        new_comment = Comment(user_id=comment_user._id, post_id=comment_post._id, content=comment_content)
+        new_comment = Comment(user_id=comment_user.id, post_id=comment_post._id, content=comment_content)
         try:
             db.session.add(new_comment)
             db.session.commit()
