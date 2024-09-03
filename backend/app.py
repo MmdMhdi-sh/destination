@@ -200,7 +200,7 @@ def city_posts_view(city_name):
             print("app.config['UPLOAD_PATH'] = ", app.config['UPLOAD_PATH'])
             uploaded_file.save(pic_path)
             new_post.pic = pic_path
-            path_list = new_post.pic.split('/')[1:]
+            path_list = new_post.pic.split('backend\\')[1:]
             print("path_list = ", path_list)
             new_path = '/'.join(path_list)
             print("new_path = ", new_path)
