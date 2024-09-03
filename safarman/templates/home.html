@@ -1,0 +1,115 @@
+<!-- {{ url_for('static', filename='') }} -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safar Man</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+</head>
+<body>
+    <header class="main-header"></header>
+    <main class="main-main">
+        <video autoplay loop muted>
+            <source src="{{ url_for('static', filename='video/video1.mp4') }}" type="video/mp4">
+        </video>
+        <div class="navbar">
+            <img src="{{ url_for('static', filename='images/favicon.png')}}" alt="no-img-found">
+            <div class="border-blue">
+                <ul>
+                    <li>
+                        <a href="#" target="_blank">پشتیبانی</a>
+                    </li>
+                    <li>
+                        <a href="/travel" target="_blank">خواندنی</a>
+                    </li>
+                    <li>
+                        <a href="/">صفحه اصلی</a>
+                    </li>
+                    <li>
+                        <a href="/login">ورود به حساب</a>
+                    </li>
+                    <li>
+                        <a href="/register">ثبت نام</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-content">
+
+<div class="container" id="mytrip">
+    
+  <div class="blobs">
+    <div class="liquid"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>   
+  <h1 class="text">ســـــــــــــفـــــــــر &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; مـــــــــــــــــــــن</h1>
+</div>
+    </main>
+    <div class="slider">
+        <div class="slide-track">
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider1.jpg')}}" height="80" width="200" alt=""/>
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider2.jpg"')}} height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider3.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider4.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider5.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider6.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider7.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider8.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider9.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider10.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider1.jpg')}}" height="80" width="200" alt=""/>
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider2.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider3.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider4.jpg')}}" height="80" width="200" alt="" />
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/slider5.jpg')}}" height="80" width="200" alt="" />
+            </div>
+        </div>
+    </div>
+
+    <div id="myDiv" class="black-pic">
+        <image class="girl" src="{{ url_for('static', filename='images/girl.png')}}" mode="">
+        <image class="boy" src="{{ url_for('static', filename='images/boy.png')}}" mode="">
+    </div>
+
+    <script src="{{ url_for('static', filename='js/homeScript.js')}}"></script>
+</body>
+</html>

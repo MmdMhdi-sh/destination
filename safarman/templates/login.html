@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login_style.css')}}">
+  <link rel="icon" href="../images/favicon.png">
+</head>
+
+<body>
+    <div class="home-icon">
+        <a href="home.html">
+            <img src="{{ url_for('static', filename='images/home_icon.gif')}}" alt="">
+        </a>
+    </div>
+    <div class="bor">
+        <section>
+            <form action="/login" method="POST"  id="loginForm">
+                <h1>
+                    <img class="logo-img" src="{{ url_for('static', filename='images/favicon.png')}}" alt="">
+                    <p class="loginn">ورود به حساب کاربری</p>
+                </h1>
+
+
+                <div class="inputbox">
+                    <img class="u" src="https://icongr.am/fontawesome/user-o.svg?size=26&color=f6ae13" alt="">
+                    <input type="text" id="username" name="username" required>
+                    <label for="">نام کاربری</label>
+                </div>
+                <div class="inputbox">
+                    <img src="https://icongr.am/jam/key.svg?size=26&color=f6ae13" alt="">
+                    <input type="password" id="password" name="password" required>
+                    <label for="">رمز عبور</label>
+                </div>
+
+
+                <div class="forget">
+                  <label class="remmember" for=""><input id="remmemberMe" type="checkbox">مرا به یاد داشته باش</label>
+                  <a href="#">فراموشی رمز عبور</a>
+                </div>
+                <button id="loginBtn">وارد شوید</button>
+                <div class="register">
+                    <p>حساب کاربری ندارید ؟
+                        <a href="/register">ساخت حساب</a>
+                    </p>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/loginScript.js')}}"></script>
+</body>
+</html>

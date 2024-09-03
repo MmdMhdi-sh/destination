@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_style.css')}}">
+</head>
+<body>
+    <img class="beauty-boy-left" src="{{ url_for('static', filename='images/prof_illas_prev_ui.png')}}" alt="">
+    <img class="beauty-boy-right" src="{{ url_for('static', filename='images/prof_illas_prev_ui (1).png')}}" alt="">
+    <div><button id="logOutBtn">خروج از حساب </button></div>
+
+
+
+    <aside class="menu-container">
+            <ul class="nav-list">
+                <li class="nav-list-item">
+                    <div class="home">
+                        <span class="icon home-icon"><img src="https://icongr.am/feather/home.svg?size=30&color=301adb" alt=""></span>
+                        <span class="home-link"><a href="../templates/home.html">صفحه اصلی</a></span>
+                    </div>
+                </li>
+                <li class="nav-list-item">
+                    <div class="search">
+                        <button id="searchButton">
+                            <p>جستجو</p>
+                            <span class="icon search-icon"><img src="https://icongr.am/feather/search.svg?size=30&color=301adb" alt=""></span>
+                        </button>
+                        <form id="searchCityForm" action="#">
+                            <input type="search" name="searchCity" id="searchCity" style="display: none;" placeholder="نام محل را وارد کنید ...">
+                        </form>
+                    </div> 
+                </li>
+                <li class="nav-list-item">
+                    <div class="create">
+                        
+                        <form action="/profile" method="POST" enctype="multipart/form-data">
+                            <!-- <span class="icon create-icon"><img src="https://icongr.am/feather/share.svg?size=30&color=301adb" alt=""></span>
+                            <input type="file" id="fileInput" name="fileInput">
+                            <button type="submit" id="uploadButton">شهر جدید</button> -->
+                            {{ form.hidden_tag() }}
+                            {{ form.pic.label(class="form-label") }}
+                            {{ form.pic(class="form-control") }}
+                            <br>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                </li>
+            </ul>
+    </aside>
+    <section class="container">
+        <div class="user-info">
+            <div class="profile-image"><img src="{{ url_for('static', filename='images/favicon.png')}}" alt=""></div>
+            <div class="user-name"><span class="ID">شهر ها</span></div>
+            <div class="user-bio">به سایت  ما خوش آمدید ، دراین صفحه شما میتوانید تجربیات خود را از مکان های دیدنی که سفر کرده اید با ما به اشتراک بگذارید ، بی شک خاطرات و تجربیات شما شنیدنی است </div>
+        </div>
+        <div class="user-posts-line">
+            <div class="number-of-posts">لیست شهر ها</div>
+        </div>
+        <div class="posts" id="postPlace">
+            <div class="post-card" id="post">
+                <a href="../templates/comment.html"><img src="{{ url_for('static', filename='images/LosAngeles.jpg')}}" alt=""></a>
+            </div>
+            {% for post in posts %}
+            <div class="post-card" id="post">
+                <a href="/post/{{ post._id }}"><img src="{{ post.pic }}" alt=""></a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <footer>
+        <div class="footerr">
+            <a href="#">درباره ما</a>
+            <a href="#">راهنمای سایت</a>
+            <a href="#">حریم خصوصی</a>
+            <a href="#">مقررات</a>
+        </div>
+        <div class="copy-right"><span>حق سایت محفوظ است</span><span>2024</span><span>©</span></div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/uploadPhoto.js')}}"></script>
+</body>
+</html>
+
+

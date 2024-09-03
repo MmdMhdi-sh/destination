@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>city</title>
+    <link rel="stylesheet" href="../static/css/comment_style.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png')}}">
+</head>
+
+<body>
+    <aside class="post-photo-container">
+        <div class="post-photo-place">
+            <img id="post-photo" src="../static/images/LosAngeles.jpg" alt="no img found">
+        </div>
+        <div class="anime">
+            <img src="../static/images/comment_anime_prev_ui.png" alt="">
+        </div>
+    </aside>
+    
+    <section class="container">
+        <div id="postContainer" class="comments-vise">
+            <form action="#" method="post"> <!--mahal namayesh post has , nemidoonam b dard mikhore tag form bezarim ya na vali gozashtam-->
+                <ul id="commentsList">
+                    {% for comment in comments %}
+                    <div class="replymessageText">
+                        <div class="usernameTime">
+                            <input class="username" type="text">
+                            <input class="time" type="time">
+                        </div>
+                        <div class="area">
+                            <div class="commentTextReply"><p class="bold">{{ comment._id }}</p>{{ comment.content }}</div>
+                            <button class="reply-btn" id="replySendIcon" type="submit"><image src="https://icongr.am/entypo/level-down.svg?size=19&color=currentColor"></button>    
+                        </div>
+                    </div>
+                    <div class="firstSend">
+                        <div class="usernameTime">
+                            <input class="username" type="text">
+                            <input class="time" type="time">
+                    </div>
+                        <div class="area">
+                            <div class="commentText">{{ comment._id }}</p>{{ comment.content }}</div>
+                            <button class="reply-btn" id="replySendIcon" type="submit"><image src="https://icongr.am/entypo/level-down.svg?size=19&color=currentColor"></button>
+    
+                        </div>
+                    </div>  
+                     <div class="sendReply">
+                        <form action="#" method="POST">
+                            <input type="text" name="sendreply" id="sendreply" placeholder="متن پیام را وارد کنید ...">
+                            <button class="" id="sendSubmitButton" type="submit">ارسال</button>
+                        </form>
+                     </div>
+                     {% endfor %} 
+                    </ul>
+            </form>
+        </div>
+            
+        <form action="/post/{{ post._id }}" method="POST"> <!--send comment-->
+            <div class="message">
+                <textarea id="commentInput" name="commentText" placeholder="متن پیام را وارد کنید ..." required></textarea>
+                <button id="commentSend" type="submit">
+                    <image src="https://icongr.am/fontawesome/commenting.svg?size=27&color=3a0ca7" mode="">
+                </button>
+            </div>
+        </form>
+    </section>
+            
+    <script src="../static/js/newComment.js"></script>
+    <script src="../static/js/replyForm.js" ></script>
+</body>
+
+</html>

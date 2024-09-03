@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>city</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/comment_style.css')}}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png')}}">
+    <script src="{{ url_for('static', filename='js/app.js')}}"></script>
+</head>
+
+<body>
+    <form class="form" action="/post/{{ post._id }}" method="POST">
+        <label class="form-label" for="commentText"></label>
+        <input class="form-control" type="text" name="commentText">
+        <input class="btn btn-primary" type="submit">
+        {% for comment in comments %}
+            <p class="bold">{{ comment.user_id }}</p><br>
+            <p>{{ comment.content }}</p>
+        {% endfor %}
+    </form>
+</body>
+
+</html>

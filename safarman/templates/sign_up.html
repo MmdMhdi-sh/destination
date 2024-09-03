@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>sign_up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sign_up_style.css')}}">
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.png')}}">
+  <title>Sign UP</title>
+</head>
+
+<body>
+    <div class="bor">
+        <section>
+            <form action="/register" method="post">
+                <h1>
+                    <img src="{{ url_for('static', filename='images/favicon.png')}}" alt="no-image-found" style="width: 140px; height: 140px;">
+                    <p class="loginn" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">ثبت نام</p>
+                </h1>
+
+
+                <div class="inputbox">
+                    <img class="u" src="https://icongr.am/fontawesome/envelope-o.svg?size=26&color=f6ae13" alt="">
+                    <input id="registerEmail" name="registerEmail" type="email" required>
+                    <label for="">ایمیل</label>
+                </div>
+                <div class="inputbox">
+                    <img class="u" src="https://icongr.am/fontawesome/user-o.svg?size=26&color=f6ae13" alt="">
+                    <input id="registerUsername" name="registerUsername" type="text" required>
+                    <label for="">نام کاربری</label>
+                </div>
+                <div class="inputbox">
+                    <img  class="UI" src="https://icongr.am/jam/key.svg?size=26&color=f6ae13" alt="">
+                    <input type="password" id="registerPassword" name="registerPassword" oninput="checkPasswords()" required>
+                    <label for="">رمز عبور</label>
+                </div>
+                <div class="inputbox">
+                    <img class="u" src="https://icongr.am/jam/key.svg?size=26&color=f6ae13" alt="">
+                    <input type="password" id="confirmPassword" name="confirmPassword" oninput="checkPasswords()" required>
+                    <label for="">رمز عبور را مجدد وارد کنید</label>
+                </div>
+                <div class="agree">
+                    <span><a href="#" download="file.txt">قوانین</a> سایت را مطالعه کرده و میپذیرم</span>
+                    <input type="checkbox" required>
+                </div>
+                <button id="registerBtn">ثبت اطلاعات</button>
+                <div class="have-account"><p>هستم!</p><a href="/login">عضو</a></div>
+            </form>
+        </section>
+    </div>
+    <div class="home-icon">
+        <a href="home.html">
+            <img src="{{ url_for('static', filename='images/home_icon.gif')}}" alt="no-gif-found">
+        </a>
+    </div>
+    <script src="{{ url_for('static', filename='js/signupScript.js')}}"></script>
+</body>
+</html>
