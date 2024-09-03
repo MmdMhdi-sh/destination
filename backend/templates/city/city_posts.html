@@ -6,13 +6,23 @@
 
 {% block body %}
 <div class="container">
-    <form class="mt-5" action="/posts/{{ city.name }}" method="POST">
+    <!-- <form class="mt-5" action="/posts/{{ city.name }}" method="POST">
         <label for="post-content" class="form-label">Content</label>
         <br>
         <input type="textarea" name="content" id="post-content">
         <br>
         <input type="submit" name="add post" class="btn btn-primary mt-2">
+    </form> -->
+    <form class="mt-5" action="/posts/{{ city.name }}" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ form.pic.label(class="form-label") }}
+        {{ form.pic(class="form-control") }}
+        <br>
+        {{ form.content.label(class="form-label") }}
+        {{ form.content(class="form-control") }}
+        {{ form.submit(class="btn btn-primary") }}
     </form>
+       
     <div class="row gy-3 mt-5">
         {% for post in posts %}
         <div class="col-3">
@@ -20,6 +30,7 @@
                 <img src="..." class="card-img-top" alt="...">
                 <div class="card-body">
                 <h5 class="card-title">{{ post.city.name }}</h5>
+                <p>{{ post.pic }}</p>
                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque optio quasi officia, laborum fugit dolores corporis obcaecati in labore reprehenderit iste dolor quaerat exercitationem perspiciatis a, molestiae necessitatibus ex deserunt?<30></30></p>
                 <a href="/posts/{{ post._id }}" class="btn btn-primary">View</a>
                 </div>

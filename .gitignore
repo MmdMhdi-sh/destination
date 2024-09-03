@@ -2,3 +2,5 @@ venv/
 destination.code-workspace
 todo.md
 instance/
+.env
+backend/static/uploads/

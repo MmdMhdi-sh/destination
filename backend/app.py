@@ -1,3 +1,6 @@
+import os
+import imghdr
+import uuid
 from datetime import timedelta, datetime
 from flask import (
     Flask, 
@@ -5,21 +8,25 @@ from flask import (
     redirect,
     render_template,
     request, 
+    send_from_directory,
     url_for
 )
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from werkzeug.utils import secure_filename
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
+from wtforms.validators import InputRequired, Length, ValidationError 
 
 
 app = Flask(__name__)
-
-app.secret_key = "thisisasecretkey"
+# "G:\Projects\Web_Developement\destination\backend\static\uploads"
+app.secret_key = "Youareabitch"
 app.config["UPLOAD_EXTENSIONS"] = [".jpg", ".png"]
-app.config["UPLOAD_PATH"] = "image_uploads"
+app.config["UPLOAD_PATH"] = os.environ.get('UPLOAD_PATH')
+print("UPLOAD PATH =", app.config["UPLOAD_PATH"])
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask.db"
 app.permanent_session_lifetime = timedelta(minutes=5)
 db = SQLAlchemy(app)
@@ -37,6 +44,14 @@ functions
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0)
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return "." + (format if format != "jpeg" else "jpg")
 
 """
 Models
@@ -58,10 +73,16 @@ class City(db.Model):
 class Post(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
     city_id = db.Column(db.String(150), db.ForeignKey('city._id'), nullable=False)
+    pic = db.Column(db.String(140))
     content = db.Column(db.String(500), nullable=False)
 
     def __repr__(self):
         return '<Post %r>' % self._id
+    
+class PostForm(FlaskForm):
+    content = TextAreaField('Description')
+    pic = FileField('Picture', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
+    submit = SubmitField('Upload')
 
 class Comment(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
@@ -160,25 +181,41 @@ def logout():
     logout_user()
     return redirect(url_for('home_page'))
 
-
+# MArboot b File
 @app.route('/posts/<city_name>', methods=['GET', 'POST'])
 def city_posts_view(city_name):
+    form = PostForm()
     if request.method == 'POST':
         # post_user = User.query.filter_by(username=request.form['username'])
-        post_city = City.query.filter_by(name=city_name).first()
-        post_city_id = post_city._id
-        post_content = request.form['content']
-        new_post = Post(city_id=post_city_id, content=post_content)
-        try:
-            db.session.add(new_post)
-            db.session.commit()
-            return redirect(url_for('city_posts_view', city_name=post_city.name))
-        except:
-            return 'You cannot add this post!'
-    print("city_name = ",city_name)
+        if form.validate_on_submit():
+            post_city = City.query.filter_by(name=city_name).first()
+            post_city_id = post_city._id
+            new_post = Post(city_id=post_city_id, content=form.content.data)
+            uploaded_file = form.pic.data
+            filename = secure_filename(uploaded_file.filename)
+            # uploaded_file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_PATH'],secure_filename(uploaded_file.filename))) # Then save the file
+            print("filename = ", filename)
+            pic_path = os.path.join(app.config['UPLOAD_PATH'], filename)
+            print("pic_path = ", pic_path)
+            print("app.config['UPLOAD_PATH'] = ", app.config['UPLOAD_PATH'])
+            uploaded_file.save(pic_path)
+            new_post.pic = pic_path
+            path_list = new_post.pic.split('/')[1:]
+            print("path_list = ", path_list)
+            new_path = '/'.join(path_list)
+            print("new_path = ", new_path)
+        
+            # Update the database
+            new_post.pic = new_path
+            try:
+                db.session.add(new_post)
+                db.session.commit()
+                return redirect(url_for('city_posts_view', city_name=post_city.name))
+            except:
+                return 'You cannot add this post!'
     city_obj= City.query.filter_by(name=city_name).first()
-    posts_list = City.query.filter_by(name=city_obj.name).first().posts
-    return render_template('city/city_posts.html', city=city_obj, posts=posts_list)
+    posts_list = city_obj.posts
+    return render_template('city/city_posts.html', form=form, city=city_obj, posts=posts_list)
 
 @app.route('/posts/<int:id>', methods=['POST', 'GET'])
 def post_detail_view(id):
